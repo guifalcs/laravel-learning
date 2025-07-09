@@ -13,7 +13,6 @@ class NoteController extends Controller
     public function index()
     {
         $notes = Note::query()->orderBy('created_at', 'desc')->paginate(15);
-        // dd($notes);
         return view('note.index', ['notes' => $notes]);
     }
 
@@ -30,7 +29,14 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        return view('note.store');
+        $data = $request->validate([
+            'note' => ['required', 'string'],
+        ]);
+
+        $data['user_id'] = 1;
+        $note = Note::create($data);
+
+        return to_route('note.show', $note)->with('message', 'Note was created');
     }
 
     /**
